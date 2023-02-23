@@ -1,4 +1,4 @@
-### Who is your secret Santa?
+# Who is your secret Santa?
 
 This project have only purpose for training tests using Next.js with Typescript and Jest for front-end development aiming 100% test coverage.
 
