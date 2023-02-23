@@ -1,9 +1,26 @@
 import React from 'react';
 
-function Footer() {
+import { useRouter } from 'next/router';
+import { useListaDeParticipantes } from '../../hooks/useListadeParticipantes';
+import { useDraw } from '../../hooks/useDraw';
+
+const Footer = () => {
+  const participantes = useListaDeParticipantes();
+  const router = useRouter();
+  const realizarSorteio = useDraw();
+
+  const jogar = () => {
+    realizarSorteio();
+    router.push('/resultado');
+  };
+
   return (
-    <footer className="bg-white p-4 shadow dark:bg-gray-800 md:flex md:items-center md:justify-between md:p-6" />
+    <div>
+      <button disabled={participantes.length < 3} onClick={jogar} type="submit">
+        iniciar brincadeira
+      </button>
+    </div>
   );
-}
+};
 
 export default Footer;

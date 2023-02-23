@@ -5,8 +5,9 @@ import { RecoilRoot } from 'recoil';
 import { fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
-import Roll from '../components/Roll/Roll';
+import Footer from '../components/Footer/Footer';
 import { useListaDeParticipantes } from '../hooks/useListadeParticipantes';
+import { useDraw } from '../hooks/useDraw';
 
 jest.mock('../hooks/useListadeParticipantes', () => {
   return {
@@ -17,10 +18,15 @@ jest.mock('../hooks/useListadeParticipantes', () => {
 jest.mock('next/router', () => ({
   useRouter: jest.fn(),
 }));
-
 const mockedRouter = {
   push: jest.fn(),
 };
+
+jest.mock('../hooks/useDraw', () => ({
+  useDraw: jest.fn(),
+}));
+
+const Mocksorteio = jest.fn();
 
 describe('quando nao existem participantes suficintes', () => {
   const participantes: string[] = ['ana', 'joana'];
@@ -30,7 +36,7 @@ describe('quando nao existem participantes suficintes', () => {
   test('testa se tem pelo menos 3 participantes para iniciar', () => {
     render(
       <RecoilRoot>
-        <Roll />
+        <Footer />
       </RecoilRoot>
     );
 
@@ -44,17 +50,16 @@ describe('quando existem participantes suficientes', () => {
   beforeEach(() => {
     (useListaDeParticipantes as jest.Mock).mockReturnValue(participantes);
     (useRouter as jest.Mock).mockReturnValue(mockedRouter);
+    (useDraw as jest.Mock).mockReturnValue(Mocksorteio);
   });
   afterEach(() => {
     jest.resetAllMocks();
   });
-  afterEach(() => {
-    jest.resetAllMocks();
-  });
+
   test('tem que ter 3 participantes ou mais', () => {
     render(
       <RecoilRoot>
-        <Roll />
+        <Footer />
       </RecoilRoot>
     );
 
@@ -65,7 +70,7 @@ describe('quando existem participantes suficientes', () => {
   test('Botao deve mandar para pagina de resultado', () => {
     render(
       <RecoilRoot>
-        <Roll />
+        <Footer />
       </RecoilRoot>
     );
 
@@ -73,6 +78,8 @@ describe('quando existem participantes suficientes', () => {
 
     fireEvent.click(botao);
 
-    expect(mockedRouter.push).toBeCalled();
+    expect(mockedRouter.push).toHaveBeenCalledTimes(1);
+    expect(mockedRouter.push).toBeCalledWith('/resultado');
+    expect(Mocksorteio).toHaveBeenCalledTimes(1);
   });
 });
